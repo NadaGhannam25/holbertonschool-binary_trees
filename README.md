@@ -1,17 +1,8 @@
-# C - Binary Trees
-
-This project is part of the **Holberton School** curriculum.  
-It focuses on understanding how **binary trees** work in the C programming language — how to create them, link nodes, and analyze their properties such as height, depth, and balance.
-
-Working on this project helped me improve my understanding of **data structures** and **recursion in C**.
-
-
-## Project Description
+# C - Binary Trees (Project Description)
 
 A **binary tree** is a data structure where each node has at most two children — a left and a right child.  
 In this project, I implemented several functions that perform various operations on binary trees, including creation, insertion, traversal, and checking for different properties.
 
-The project was written in **C** and tested on **Ubuntu 20.04 LTS**.
 
 
 ## Project Files
@@ -70,6 +61,40 @@ The project was written in **C** and tested on **Ubuntu 20.04 LTS**.
 - **Don’t forget to push your header file**  
 - All **header files should be include-guarded**
 
+## Structure Definition Example:
+```
+/**
+ * struct binary_tree_s - Binary tree node
+ *
+ * @n: Integer stored in the node
+ * @parent: Pointer to the parent node
+ * @left: Pointer to the left child node
+ * @right: Pointer to the right child node
+ */
+struct binary_tree_s
+{
+    int n;
+    struct binary_tree_s *parent;
+    struct binary_tree_s *left;
+    struct binary_tree_s *right;
+};
+
+typedef struct binary_tree_s binary_tree_t;
+
+```
+
+## Compilation & Example Run :
+```
+gcc -Wall -Werror -Wextra -pedantic -std=gnu89 0-main.c 0-binary_tree_node.c binary_tree_print.c -o 0-node
+./0-node
+```
+
+## Example Output :
+```
+Node: 98
+Left child: 12
+Right child: 402
+```
 
 ## Authors
 
