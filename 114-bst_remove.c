@@ -27,13 +27,13 @@ bst_t *temp = NULL;
 if (root == NULL)
 return (NULL);
 
-if (value < root->n) 
+if (value < root->n)
 root->left = bst_remove(root->left, value);
 
-else if (value > root->n) 
+else if (value > root->n)
 root->right = bst_remove(root->right, value);
 
-else 
+else
 {
 if (root->left == NULL)
 {
