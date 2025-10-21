@@ -1,54 +1,4 @@
 #include "binary_trees.h"
-#include <stdlib.h>
-
-/**
-* struct levelorder_queue_s - Queue node structure for level-order traversal
-* @node: Pointer to a binary tree node
-* @next: Pointer to the next queue node
-*/
-typedef struct levelorder_queue_s
-{
-binary_tree_t *node;
-struct levelorder_queue_s *next;
-} levelorder_queue_t;
-
-/* Function prototypes */
-levelorder_queue_t *create_node(binary_tree_t *node);
-void free_queue(levelorder_queue_t *head);
-void push(binary_tree_t *node, levelorder_queue_t *head,
-levelorder_queue_t **tail, void (*func)(int));
-void pop(levelorder_queue_t **head);
-
-/**
-* binary_tree_levelorder - Goes through a binary tree using level-order traversal
-* @tree: Pointer to the root node of the tree to traverse
-* @func: Pointer to a function to call for each node
-*/
-void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
-{
-levelorder_queue_t *head, *tail;
-
-if (tree == NULL || func == NULL)
-return;
-
-head = tail = create_node((binary_tree_t *)tree);
-if (head == NULL)
-return;
-
-while (head)
-{
-func(head->node->n);
-
-if (head->node->left)
-push(head->node->left, head, &tail, func);
-if (head->node->right)
-push(head->node->right, head, &tail, func);
-
-pop(&head);
-}
-
-free_queue(head);
-}
 
 /**
 * create_node - Creates a new queue node
@@ -94,7 +44,7 @@ void push(binary_tree_t *node, levelorder_queue_t *head,
 levelorder_queue_t **tail, void (*func)(int))
 {
 levelorder_queue_t *new = create_node(node);
-(void)func; /* avoid unused parameter warning */
+(void)func;
 
 if (new == NULL)
 {
@@ -122,3 +72,32 @@ free(*head);
 *head = tmp;
 }
 
+/**
+* binary_tree_levelorder - Goes through a binary tree using level-order traversal
+* @tree: Pointer to the root node of the tree to traverse
+* @func: Pointer to a function to call for each node
+*/
+void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
+{
+levelorder_queue_t *head, *tail;
+
+if (tree == NULL || func == NULL)
+return;
+
+head = tail = create_node((binary_tree_t *)tree);
+if (head == NULL)
+return;
+
+while (head)
+{
+func(head->node->n);
+
+if (head->node->left)
+push(head->node->left, head, &tail, func);
+if (head->node->right)
+push(head->node->right, head, &tail, func);
+
+pop(&head);
+}
+free_queue(head);
+}
