@@ -1,12 +1,12 @@
 #include "binary_trees.h"
+#include <stdlib.h>
 
 /**
- * find_successor - Finds the in-order successor of a node.
- * @node: Pointer to the node whose successor is to be found.
- *
- * Return: Pointer to the successor node.
+ * find_min - Finds the smallest node (in-order successor)
+ * @node: pointer to the node to start from
+ * Return: pointer to the node with the minimum value
  */
-avl_t *find_successor(avl_t *node)
+avl_t *find_min(avl_t *node)
 {
 	while (node && node->left)
 		node = node->left;
@@ -14,21 +14,20 @@ avl_t *find_successor(avl_t *node)
 }
 
 /**
- * avl_remove - Removes a node from an AVL tree and rebalances it.
- * @root: Pointer to the root node of the tree.
- * @value: Value to remove from the tree.
- *
- * Return: Pointer to the new root node after removal and rebalancing.
+ * avl_remove - Removes a node from an AVL tree and rebalances it
+ * @root: pointer to the root of the AVL tree
+ * @value: value to remove
+ * Return: pointer to the new root after deletion and rebalancing
  */
 avl_t *avl_remove(avl_t *root, int value)
 {
-	avl_t *tmp;
+	avl_t *temp;
 	int balance;
 
-	if (!root)
+	if (root == NULL)
 		return (NULL);
 
-	/* Step 1: Perform standard BST deletion */
+	/* Step 1: Standard BST delete */
 	if (value < root->n)
 		root->left = avl_remove(root->left, value);
 	else if (value > root->n)
@@ -36,21 +35,24 @@ avl_t *avl_remove(avl_t *root, int value)
 	else
 	{
 		/* Node found */
-		if (!root->left || !root->right)
+		if (root->left == NULL || root->right == NULL)
 		{
-			tmp = root->left ? root->left : root->right;
+			temp = root->left ? root->left : root->right;
 			free(root);
-			return (tmp);
+			return (temp);
 		}
-		tmp = find_successor(root->right);
-		root->n = tmp->n;
-		root->right = avl_remove(root->right, tmp->n);
+		else
+		{
+			temp = find_min(root->right);
+			root->n = temp->n;
+			root->right = avl_remove(root->right, temp->n);
+		}
 	}
 
-	if (!root)
+	if (root == NULL)
 		return (NULL);
 
-	/* Step 2: Rebalance the node */
+	/* Step 2: Rebalance */
 	balance = binary_tree_balance(root);
 
 	/* Left heavy */
