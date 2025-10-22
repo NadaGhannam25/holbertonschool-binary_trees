@@ -1,72 +1,76 @@
 #include "binary_trees.h"
 
 /**
-* avl_remove - Removes a node from an AVL tree and rebalances it.
-* @root: Pointer to the root node of the tree
-* @value: Value to remove from the tree
-*
-* Return: Pointer to the new root node after removal and rebalancing
-*/
+ * find_successor - Finds the in-order successor of a node.
+ * @node: Pointer to the node whose successor is to be found.
+ *
+ * Return: Pointer to the successor node.
+ */
+avl_t *find_successor(avl_t *node)
+{
+	while (node && node->left)
+		node = node->left;
+	return (node);
+}
+
+/**
+ * avl_remove - Removes a node from an AVL tree and rebalances it.
+ * @root: Pointer to the root node of the tree.
+ * @value: Value to remove from the tree.
+ *
+ * Return: Pointer to the new root node after removal and rebalancing.
+ */
 avl_t *avl_remove(avl_t *root, int value)
 {
-avl_t *tmp;
-int balance;
+	avl_t *tmp;
+	int balance;
 
-if (root == NULL)
-return (NULL);
+	if (!root)
+		return (NULL);
 
-if (value < root->n)
-root->left = avl_remove(root->left, value);
-else if (value > root->n)
-root->right = avl_remove(root->right, value);
-else
-{
-/* Case 1 or 2: node with one or no child */
-if (root->left == NULL)
-{
-tmp = root->right;
-free(root);
-return (tmp);
-}
-else if (root->right == NULL)
-{
-tmp = root->left;
-free(root);
-return (tmp);
-}
+	/* Step 1: Perform standard BST deletion */
+	if (value < root->n)
+		root->left = avl_remove(root->left, value);
+	else if (value > root->n)
+		root->right = avl_remove(root->right, value);
+	else
+	{
+		/* Node found */
+		if (!root->left || !root->right)
+		{
+			tmp = root->left ? root->left : root->right;
+			free(root);
+			return (tmp);
+		}
+		tmp = find_successor(root->right);
+		root->n = tmp->n;
+		root->right = avl_remove(root->right, tmp->n);
+	}
 
-/* Case 3: node with two children -> replace with successor */
-tmp = root->right;
-while (tmp->left != NULL)
-tmp = tmp->left;
-root->n = tmp->n;
-root->right = avl_remove(root->right, tmp->n);
-}
+	if (!root)
+		return (NULL);
 
-if (root == NULL)
-return (NULL);
+	/* Step 2: Rebalance the node */
+	balance = binary_tree_balance(root);
 
-/* Rebalance the tree */
-balance = binary_tree_balance(root);
+	/* Left heavy */
+	if (balance > 1)
+	{
+		if (binary_tree_balance(root->left) >= 0)
+			return (binary_tree_rotate_right(root));
+		root->left = binary_tree_rotate_left(root->left);
+		return (binary_tree_rotate_right(root));
+	}
 
-if (balance > 1 && binary_tree_balance(root->left) >= 0)
-return (binary_tree_rotate_right(root));
+	/* Right heavy */
+	if (balance < -1)
+	{
+		if (binary_tree_balance(root->right) <= 0)
+			return (binary_tree_rotate_left(root));
+		root->right = binary_tree_rotate_right(root->right);
+		return (binary_tree_rotate_left(root));
+	}
 
-if (balance > 1 && binary_tree_balance(root->left) < 0)
-{
-root->left = binary_tree_rotate_left(root->left);
-return (binary_tree_rotate_right(root));
-}
-
-if (balance < -1 && binary_tree_balance(root->right) <= 0)
-return (binary_tree_rotate_left(root));
-
-if (balance < -1 && binary_tree_balance(root->right) > 0)
-{
-root->right = binary_tree_rotate_right(root->right);
-return (binary_tree_rotate_left(root));
-}
-
-return (root);
+	return (root);
 }
 
